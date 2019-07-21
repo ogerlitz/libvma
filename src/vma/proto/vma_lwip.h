@@ -41,6 +41,8 @@
 
 typedef enum vma_wr_tx_packet_attr {
 	/* 6 bits are reserved for TCP flags (see lwip/tcp.h)  */
+	/* zerocopy send operation. should use lkey per sge entry */
+	VMA_TX_PACKET_ZEROCOPY   = TCP_WRITE_ZEROCOPY,
 	/* nop send operation. this option should be synchronized with lwip/tcp value */
 	VMA_TX_PACKET_DUMMY   = TCP_WRITE_DUMMY,
 	/* retransmit operation. */
