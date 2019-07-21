@@ -46,6 +46,7 @@
 #include "vma/lwip/stats.h"
 
 #include <string.h>
+#include <sys/socket.h>
 
 /* Define some copy-macros for checksum-on-copy so that the code looks
    nicer by preventing too many ifdef's. */
@@ -398,11 +399,11 @@ static inline u16_t tcp_xmit_size_goal(struct tcp_pcb *pcb)
  * @param pcb Protocol control block for the TCP connection to enqueue data for.
  * @param arg Pointer to the data to be enqueued for sending.
  * @param len Data length in bytes
- * @param is_dummy indicates if the packet is a dummy packet
+ * @param flags Send flags (can indicate if this is dummy packet, etc).
  * @return ERR_OK if enqueued, another err_t on error
  */
 err_t
-tcp_write(struct tcp_pcb *pcb, const void *arg, u32_t len, u8_t is_dummy)
+tcp_write(struct tcp_pcb *pcb, const void *arg, u32_t len, int flags)
 {
   struct pbuf *concat_p = NULL;
   struct tcp_seg *seg = NULL, *prev_seg = NULL, *queue = NULL;
@@ -424,6 +425,8 @@ tcp_write(struct tcp_pcb *pcb, const void *arg, u32_t len, u8_t is_dummy)
 #if LWIP_TSO
   int tot_p = 0;
 #endif /* LWIP_TSO */
+
+  u8_t is_dummy = (flags & LWIP_SEND_FLAGS_DUMMY)? 1:0;
 
   int byte_queued = pcb->snd_nxt - pcb->lastack;
   if ( len < pcb->mss && !is_dummy)
