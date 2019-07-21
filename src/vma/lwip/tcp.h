@@ -432,6 +432,8 @@ struct tcp_pcb {
     /* Maximum number of SGE */
     u32_t max_send_sge;
   } tso;
+
+  u32_t max_send_sge;
 #endif /* LWIP_TSO */
 };
 
@@ -519,11 +521,12 @@ err_t            tcp_shutdown(struct tcp_pcb *pcb, int shut_rx, int shut_tx);
 #define LWIP_SEND_FLAGS_DUMMY MSG_SYN
 
 /* Flags for "apiflags" parameter in tcp_write */
-#define TCP_WRITE_FLAG_COPY 0x01
+#define TCP_WRITE_ZEROCOPY  0x01
 #define TCP_WRITE_FLAG_MORE 0x02
 #define TCP_WRITE_REXMIT    0x08
 #define TCP_WRITE_DUMMY     0x10
 #define TCP_WRITE_TSO       0x20
+#define TCP_WRITE_FLAG_COPY 0x40
 
 err_t            tcp_write   (struct tcp_pcb *pcb, const void *dataptr, u32_t len,
                               int flags);
